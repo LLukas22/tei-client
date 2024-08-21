@@ -2,7 +2,7 @@
 """Client and server classes corresponding to protobuf-defined services."""
 import grpc
 
-import tei_pb2 as tei__pb2
+import stubs.tei_pb2 as tei__pb2
 
 
 class InfoStub(object):
