@@ -1,0 +1,52 @@
+# Docker compose used for testing
+
+services:
+  embedding-http:
+    image: ghcr.io/huggingface/text-embeddings-inference:cpu-latest
+    volumes:
+        - ./tei_data:/data:z
+    command: --model-id sentence-transformers/all-MiniLM-L6-v2 --max-batch-tokens 2048 --max-client-batch-size 20 
+    ports:
+      - 8080:80
+  
+  embedding-grpc:
+    image: ghcr.io/huggingface/text-embeddings-inference:cpu-latest-grpc
+    volumes:
+        - ./tei_data:/data:z
+    command: --model-id sentence-transformers/all-MiniLM-L6-v2 --max-batch-tokens 2048 --max-client-batch-size 20 
+    ports:
+      - 8081:80
+
+  classifier-http:
+    image: ghcr.io/huggingface/text-embeddings-inference:cpu-latest
+    volumes:
+        - ./tei_data:/data:z
+    command: --model-id MoritzLaurer/mDeBERTa-v3-base-xnli-multilingual-nli-2mil7 --max-batch-tokens 2048 --max-client-batch-size 20 
+    ports:
+      - 8082:80
+
+  classifier-grpc:
+    image: ghcr.io/huggingface/text-embeddings-inference:cpu-latest-grpc
+    volumes:
+        - ./tei_data:/data:z
+    command: --model-id MoritzLaurer/mDeBERTa-v3-base-xnli-multilingual-nli-2mil7 --max-batch-tokens 2048 --max-client-batch-size 20 
+    ports:
+      - 8083:80
+
+  reranker-http:
+    image: ghcr.io/huggingface/text-embeddings-inference:cpu-latest
+    volumes:
+        - ./tei_data:/data:z
+    command: --model-id BAAI/bge-reranker-base --max-batch-tokens 2048 --max-client-batch-size 20 
+    ports:
+      - 8084:80
+
+  reranker-grpc:
+    image: ghcr.io/huggingface/text-embeddings-inference:cpu-latest-grpc
+    volumes:
+        - ./tei_data:/data:z
+    command: --model-id BAAI/bge-reranker-base --max-batch-tokens 2048 --max-client-batch-size 20 
+    ports:
+      - 8085:80
+  
+  
