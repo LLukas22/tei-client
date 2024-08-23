@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from typing import Optional, Literal, Union, NamedTuple, Tuple
 from enum import Enum
 
@@ -50,11 +50,11 @@ class Info(BaseModel):
 	version: str
 	sha: str
 	docker_label: str
-	model_id: str
-	model_sha: Optional[str]
-	model_dtype: str
-	model_type: ModelType
-	model_metadata: Optional[ModelMetadata]
+	server_model_id: str = Field(..., alias="model_id")
+	server_model_sha: Optional[str] = Field(None, alias="model_sha")
+	server_model_dtype: str = Field(..., alias="model_dtype")
+	server_model_type: ModelType = Field(..., alias="model_type")
+	server_model_metadata: Optional[ModelMetadata] = Field(None, alias="model_metadata")
 	max_concurrent_requests: int
 	max_input_length: int
 	max_batch_tokens: int

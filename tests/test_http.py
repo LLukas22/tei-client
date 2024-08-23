@@ -28,7 +28,7 @@ async def test_is_constructable_async():
 def test_info(url: str, model_type: ModelType):
 	client = HttpClient(url)
 	info = client.info()
-	assert info.model_type == model_type
+	assert info.server_model_type == model_type
 
 
 @pytest.mark.parametrize(
@@ -42,7 +42,7 @@ def test_info(url: str, model_type: ModelType):
 async def test_info_async(url: str, model_type: ModelType):
 	client = HttpClient(url)
 	info = await client.async_info()
-	assert info.model_type == model_type
+	assert info.server_model_type == model_type
 
 
 def test_embed():

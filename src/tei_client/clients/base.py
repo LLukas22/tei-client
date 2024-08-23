@@ -25,7 +25,7 @@ class ModelTypeMixin(ABC):
 	@property
 	def model_type(self) -> ModelType:
 		if not self.__model_type:
-			self.__model_type = self.info().model_type
+			self.__model_type = self.info().server_model_type
 		return self.__model_type
 
 	def _ensure_model_type(self, wanted_type: ModelType):
