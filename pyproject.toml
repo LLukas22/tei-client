@@ -16,7 +16,6 @@ authors = [
 classifiers = [
   "Development Status :: 4 - Beta",
   "Programming Language :: Python",
-  "Programming Language :: Python :: 3.8",
   "Programming Language :: Python :: 3.9",
   "Programming Language :: Python :: 3.10",
   "Programming Language :: Python :: 3.11",
@@ -52,7 +51,7 @@ cov = [
 ]
 
 [[tool.hatch.envs.all.matrix]]
-python = ["3.8", "3.9", "3.10", "3.11", "3.12"]
+python = ["3.9", "3.10", "3.11", "3.12"]
 
 [tool.hatch.envs.types]
 dependencies = [
@@ -79,3 +78,21 @@ exclude_lines = [
   "if __name__ == .__main__.:",
   "if TYPE_CHECKING:",
 ]
+
+[tool.ruff]
+required-version = ">=0.6.0"
+preview = true
+exclude = [".venv"]
+src = ["src", "tests"]
+target-version = "py39"
+
+[tool.ruff.format]
+docstring-code-format = true
+indent-style = "tab"
+preview = true
+quote-style="double"
+skip-magic-trailing-comma = true
+
+[tool.ruff.lint]
+preview = true
+exclude = ["stubs"]
