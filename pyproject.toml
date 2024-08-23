@@ -5,9 +5,9 @@ build-backend = "hatchling.build"
 [project]
 name = "tei-client"
 dynamic = ["version"]
-description = ''
+description = 'Convenience Client for Hugging Face Text Embeddings Inference (TEI) with synchronous and asynchronous HTTP/gRPC support'
 readme = "README.md"
-requires-python = ">=3.8"
+requires-python = ">=3.9"
 license = "MIT"
 keywords = []
 authors = [
@@ -23,12 +23,26 @@ classifiers = [
   "Programming Language :: Python :: Implementation :: CPython",
   "Programming Language :: Python :: Implementation :: PyPy",
 ]
-dependencies = []
+
+dependencies = [
+  "pydantic>=2.0",
+  "httpx>=0.20"
+]
+
+[project.optional-dependencies]
+grpc=[
+    "grpcio>=1.60.0",
+]
+
+testing=[
+  "pytest",
+  "pytest-asyncio"
+]
 
 [project.urls]
-Documentation = "https://github.com/unknown/tei-client#readme"
-Issues = "https://github.com/unknown/tei-client/issues"
-Source = "https://github.com/unknown/tei-client"
+Documentation = "https://github.com/LLukas22/tei-client#readme"
+Issues = "https://github.com/LLukas22/tei-client/issues"
+Source = "https://github.com/LLukas22/tei-client"
 
 [tool.hatch.version]
 path = "src/tei_client/__about__.py"

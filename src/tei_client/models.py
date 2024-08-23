@@ -94,4 +94,4 @@ class RerankScore(BaseModel):
 
 
 class RerankResult(BaseModel):
-	scores: list[RerankScore]
+	ranks: list[RerankScore]

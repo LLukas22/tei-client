@@ -163,9 +163,9 @@ def test_rerank():
 		texts=["Lore ipsum", "Deep Learning is ..."],
 		return_text=True,
 	)
-	assert len(result.scores) == 2
-	assert result.scores[0].index == 1
-	assert result.scores[0].text == "Deep Learning is ..."
+	assert len(result.ranks) == 2
+	assert result.ranks[0].index == 1
+	assert result.ranks[0].text == "Deep Learning is ..."
 
 
 async def test_async_rerank():
@@ -175,6 +175,6 @@ async def test_async_rerank():
 		texts=["Lore ipsum", "Deep Learning is ..."],
 		return_text=True,
 	)
-	assert len(result.scores) == 2
-	assert result.scores[0].index == 1
-	assert result.scores[0].text == "Deep Learning is ..."
+	assert len(result.ranks) == 2
+	assert result.ranks[0].index == 1
+	assert result.ranks[0].text == "Deep Learning is ..."

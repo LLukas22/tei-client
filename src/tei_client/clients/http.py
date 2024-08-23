@@ -294,7 +294,7 @@ class HttpClient(ConcurrentClientMixin, AsyncClientMixin, ModelTypeMixin):
 			},
 		)
 		results = result.json()
-		return RerankResult(scores=[RerankScore.model_validate(r) for r in results])
+		return RerankResult(ranks=[RerankScore.model_validate(r) for r in results])
 
 	async def async_rerank(
 		self,
@@ -319,4 +319,4 @@ class HttpClient(ConcurrentClientMixin, AsyncClientMixin, ModelTypeMixin):
 			},
 		)
 		results = result.json()
-		return RerankResult(scores=[RerankScore.model_validate(r) for r in results])
+		return RerankResult(ranks=[RerankScore.model_validate(r) for r in results])
