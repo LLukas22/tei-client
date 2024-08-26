@@ -58,7 +58,6 @@ class HttpClient(ConcurrentClientMixin, AsyncClientMixin, ModelTypeMixin):
 	def embed(
 		self,
 		text: EmbeddingInput,
-		pool: bool = True,
 		normalize: bool = True,
 		truncate: bool = False,
 		truncation_direction: TruncationDirection = TruncationDirection.Right,

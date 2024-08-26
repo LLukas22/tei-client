@@ -3,7 +3,7 @@
 
 import grpc
 
-import stubs.tei_pb2 as tei__pb2
+import tei_client.stubs.tei_pb2 as tei__pb2
 
 
 class InfoStub(object):
