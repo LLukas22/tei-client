@@ -1,6 +1,6 @@
 pydantic
 httpx
-grpc
+grpcio
 protobuf
 pytest-asyncio
 pytest
