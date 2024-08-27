@@ -1,5 +1,5 @@
-from src.tei_client import GrpcClient
-from src.tei_client import ModelType, ClassificationTuple
+from tei_client import GrpcClient
+from tei_client import ModelType, ClassificationTuple
 import pytest
 
 
@@ -132,3 +132,50 @@ def test_classify(inputs, expected_results: int):
 	client = GrpcClient(CLASSIFIER_URL)
 	result = client.classify(inputs)
 	assert len(result) == expected_results
+
+
+@pytest.mark.parametrize(
+	"inputs,expected_results",
+	[
+		("Hello World", 1),
+		(["Hello world", "foo bar"], 2),
+		(("Hello world", "foo bar"), 1),
+		([("Hello world", "foo bar"), ("Hallo", "Hello")], 2),
+		(ClassificationTuple("Hallo", "Hello"), 1),
+		(
+			[
+				ClassificationTuple("Hallo", "Hello"),
+				ClassificationTuple("Hallo2", "Hello2"),
+			],
+			2,
+		),
+	],
+)
+async def test_async_classify(inputs, expected_results: int):
+	client = GrpcClient(CLASSIFIER_URL)
+	result = await client.async_classify(inputs)
+	assert len(result) == expected_results
+
+
+def test_rerank():
+	client = GrpcClient(RERANKER_URL)
+	result = client.rerank(
+		query="What is Deep Learning?",
+		texts=["Lore ipsum", "Deep Learning is ..."],
+		return_text=True,
+	)
+	assert len(result.ranks) == 2
+	assert result.ranks[0].index == 1
+	assert result.ranks[0].text == "Deep Learning is ..."
+
+
+async def test_async_rerank():
+	client = GrpcClient(RERANKER_URL)
+	result = await client.async_rerank(
+		query="What is Deep Learning?",
+		texts=["Lore ipsum", "Deep Learning is ..."],
+		return_text=True,
+	)
+	assert len(result.ranks) == 2
+	assert result.ranks[0].index == 1
+	assert result.ranks[0].text == "Deep Learning is ..."

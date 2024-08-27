@@ -32,6 +32,7 @@ dependencies = [
 [project.optional-dependencies]
 grpc=[
     "grpcio>=1.60.0",
+    "protobuf"
 ]
 
 testing=[
@@ -74,12 +75,21 @@ dependencies = [
 [tool.hatch.envs.types.scripts]
 check = "mypy --install-types --non-interactive {args:src/tei_client tests}"
 
+[tool.hatch.envs.hatch-test]
+extra-dependencies = [
+  "pytest-asyncio",
+  "grpcio",
+  "protobuf"
+]
+
 [tool.coverage.run]
 source_pkgs = ["tei_client", "tests"]
 branch = true
 parallel = true
 omit = [
   "src/tei_client/__about__.py",
+  "src/tei_client/stubs/*",
+  "tests/*"
 ]
 
 [tool.coverage.paths]

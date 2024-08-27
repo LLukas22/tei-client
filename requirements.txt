@@ -1,5 +1,8 @@
 pydantic
 httpx
 grpc
+protobuf
 pytest-asyncio
 pytest
+hatch
+hatchling

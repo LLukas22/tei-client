@@ -1,5 +1,5 @@
-from src.tei_client import HttpClient
-from src.tei_client import ModelType, ClassificationTuple
+from tei_client import HttpClient
+from tei_client import ModelType, ClassificationTuple
 import pytest
 
 EMBED_URL = "http://localhost:8080"

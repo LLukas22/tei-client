@@ -8,7 +8,8 @@ services:
     command: --model-id sentence-transformers/all-MiniLM-L6-v2 --max-batch-tokens 2048 --max-client-batch-size 20 
     ports:
       - 8080:80
-  
+    restart: unless-stopped
+    
   embedding-grpc:
     image: ghcr.io/huggingface/text-embeddings-inference:cpu-latest-grpc
     volumes:
@@ -16,6 +17,7 @@ services:
     command: --model-id sentence-transformers/all-MiniLM-L6-v2 --max-batch-tokens 2048 --max-client-batch-size 20 
     ports:
       - 8081:80
+    restart: unless-stopped
 
   classifier-http:
     image: ghcr.io/huggingface/text-embeddings-inference:cpu-latest
@@ -24,6 +26,7 @@ services:
     command: --model-id MoritzLaurer/mDeBERTa-v3-base-xnli-multilingual-nli-2mil7 --max-batch-tokens 2048 --max-client-batch-size 20 
     ports:
       - 8082:80
+    restart: unless-stopped
 
   classifier-grpc:
     image: ghcr.io/huggingface/text-embeddings-inference:cpu-latest-grpc
@@ -32,6 +35,7 @@ services:
     command: --model-id MoritzLaurer/mDeBERTa-v3-base-xnli-multilingual-nli-2mil7 --max-batch-tokens 2048 --max-client-batch-size 20 
     ports:
       - 8083:80
+    restart: unless-stopped
 
   reranker-http:
     image: ghcr.io/huggingface/text-embeddings-inference:cpu-latest
@@ -40,6 +44,7 @@ services:
     command: --model-id BAAI/bge-reranker-base --max-batch-tokens 2048 --max-client-batch-size 20 
     ports:
       - 8084:80
+    restart: unless-stopped
 
   reranker-grpc:
     image: ghcr.io/huggingface/text-embeddings-inference:cpu-latest-grpc
@@ -48,5 +53,6 @@ services:
     command: --model-id BAAI/bge-reranker-base --max-batch-tokens 2048 --max-client-batch-size 20 
     ports:
       - 8085:80
+    restart: unless-stopped
   
   

@@ -28,8 +28,11 @@ class HttpClient(ConcurrentClientMixin, AsyncClientMixin, ModelTypeMixin):
 		super().__init__()
 
 	def health(self) -> bool:
-		result = self.client.get("/info")
-		return not result.is_error
+		try:
+			result = self.client.get("/info")
+			return not result.is_error
+		except Exception:
+			return False
 
 	async def async_health(self) -> bool:
 		result = await self.async_client.get("/info")

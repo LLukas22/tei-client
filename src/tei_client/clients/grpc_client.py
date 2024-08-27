@@ -1,5 +1,7 @@
 import grpc
 from typing import Optional, Union
+import asyncio
+from logging import error
 
 from tei_client.clients.base import (
 	ConcurrentClientMixin,
@@ -17,6 +19,8 @@ from tei_client.models import (
 	ClassificationResult,
 	ClassificationScore,
 	ClassificationTuple,
+	RerankResult,
+	RerankScore,
 )
 
 import tei_client.stubs.tei_pb2_grpc as tei_pb2_grpc
@@ -48,7 +52,7 @@ class Stubs:
 		self.rerank = tei_pb2_grpc.RerankStub(channel)
 
 
-class GrpcClient(ModelTypeMixin):
+class GrpcClient(ConcurrentClientMixin, AsyncClientMixin, ModelTypeMixin):
 	def __init__(
 		self,
 		target: str,
@@ -68,14 +72,24 @@ class GrpcClient(ModelTypeMixin):
 
 	def __del__(self):
 		self.channel.close()
-		self.async_channel.close()
+		try:
+			loop = asyncio.get_event_loop()
+			loop.run_until_complete(self.async_channel.close())
+		except Exception as e:
+			error("Failed to close async channel", e)
 
 	def health(self) -> bool:
-		state = self.async_channel.get_state()
-		return (
-			state == grpc.ChannelConnectivity.READY
-			or state == grpc.ChannelConnectivity.IDLE
-		)
+		try:
+			state = self.async_channel.get_state()
+			return (
+				state == grpc.ChannelConnectivity.READY
+				or state == grpc.ChannelConnectivity.IDLE
+			)
+		except Exception:
+			return False
+
+	async def async_health(self) -> bool:
+		return asyncio.create_task(self.health())
 
 	@staticmethod
 	def _into_info(result) -> Info:
@@ -397,3 +411,95 @@ class GrpcClient(ModelTypeMixin):
 				)
 			)
 		return results
+
+	async def async_classify(
+		self,
+		inputs: ClassificationInput,
+		raw_scores: bool = False,
+		truncate: bool = False,
+		truncation_direction: TruncationDirection = TruncationDirection.Right,
+	) -> list[ClassificationResult]:
+		self._ensure_model_type(ModelType.Classifier)
+
+		is_pair, requests = GrpcClient._prepare_classify_input(
+			inputs, raw_scores, truncate, truncation_direction
+		)
+
+		async def gen():
+			for r in requests:
+				yield r
+
+		stream = (
+			self._async_stubs.predict.PredictPairStream(gen())
+			if is_pair
+			else self._async_stubs.predict.PredictStream(gen())
+		)
+
+		results = []
+		for _ in range(len(requests)):
+			response = await stream.read()
+			results.append(
+				ClassificationResult(
+					scores=[
+						ClassificationScore(score=p.score, label=p.label)
+						for p in response.predictions
+					]
+				)
+			)
+		return results
+
+	def rerank(
+		self,
+		query: str,
+		texts: list[str],
+		return_text: bool = False,
+		raw_scores: bool = False,
+		truncate: bool = False,
+		truncation_direction: TruncationDirection = TruncationDirection.Right,
+	) -> RerankResult:
+		self._ensure_model_type(ModelType.Reranker)
+
+		requests = tei_pb2.RerankRequest(
+			query=query,
+			texts=texts,
+			return_text=return_text,
+			truncate=truncate,
+			raw_scores=raw_scores,
+			truncation_direction=to_grpc_truncation(truncation_direction),
+		)
+
+		results = self._stubs.rerank.Rerank(requests)
+		return RerankResult(
+			ranks=[
+				RerankScore(score=r.score, index=r.index, text=r.text)
+				for r in results.ranks
+			]
+		)
+
+	async def async_rerank(
+		self,
+		query: str,
+		texts: list[str],
+		return_text: bool = False,
+		raw_scores: bool = False,
+		truncate: bool = False,
+		truncation_direction: TruncationDirection = TruncationDirection.Right,
+	) -> RerankResult:
+		self._ensure_model_type(ModelType.Reranker)
+
+		requests = tei_pb2.RerankRequest(
+			query=query,
+			texts=texts,
+			return_text=return_text,
+			truncate=truncate,
+			raw_scores=raw_scores,
+			truncation_direction=to_grpc_truncation(truncation_direction),
+		)
+
+		results = await self._async_stubs.rerank.Rerank(requests)
+		return RerankResult(
+			ranks=[
+				RerankScore(score=r.score, index=r.index, text=r.text)
+				for r in results.ranks
+			]
+		)
