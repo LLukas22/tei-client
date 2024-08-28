@@ -59,7 +59,7 @@ jobs:
         run: python ./CI/wait_for_server.py
 
       - name: Run tests
-        run: hatch test
+        run: hatch test --cover
 
       - name: Upload coverage
         uses: actions/upload-artifact@v3
