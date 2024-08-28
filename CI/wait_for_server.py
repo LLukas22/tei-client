@@ -6,6 +6,7 @@ HTTP_URLS = ['http://localhost:8080', 'http://localhost:8082', 'http://localhost
 GRPC_URLS = ['localhost:8081', 'localhost:8083', 'localhost:8085']
 
 if __name__ == '__main__':
+	print("Waiting docker healtchecks ...")
 	while len(HTTP_URLS) > 0:
 		for url in HTTP_URLS:
 			client = HttpClient(url)
