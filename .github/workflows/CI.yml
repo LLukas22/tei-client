@@ -84,6 +84,9 @@ jobs:
       - uses: actions/download-artifact@v3
         with:
           name: report
+      
+      - name: List files
+        run: ls -R
 
       - name: Upload coverage to branch
         uses: s0/git-publish-subdir-action@develop
