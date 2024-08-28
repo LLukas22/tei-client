@@ -1,6 +1,8 @@
 # tei-client
 [![PyPI Version](https://img.shields.io/pypi/v/tei-client.svg)](https://pypi.org/project/tei-client)
 [![Supported Python Versions](https://img.shields.io/pypi/pyversions/tei-client.svg)](https://pypi.org/project/tei-client)
+[![example workflow](https://github.com//LLukas22/tei-client/actions/workflows/CI.yml/badge.svg)](https://github.com/LLukas22/tei-client/actions)
+
 
 Convenience Client for [Hugging Face Text Embeddings Inference (TEI)](https://github.com/huggingface/text-embeddings-inference) with synchronous and asynchronous HTTP/gRPC support.
 
