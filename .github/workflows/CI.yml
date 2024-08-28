@@ -81,6 +81,15 @@ jobs:
           FOLDER: ./report
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Upload coverage html to branch
+        uses: s0/git-publish-subdir-action@develop
+        env:
+          REPO: self
+          BRANCH: coverage
+          FOLDER: ./report/html
+          TARGET_DIR: www
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Stop containers
         if: always()
         run: docker compose -f "docker-compose.yml" down
