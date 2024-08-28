@@ -63,22 +63,22 @@ jobs:
 
       - name: Generate reports
         run: |
-          coverage xml -o report\coverage.xml
-          coverage html -d report\html
-          genbadge coverage -i report\coverage.xml -o report\badge.svg
+          coverage xml -o ./report/coverage.xml
+          coverage html -d ./report/html
+          genbadge coverage -i ./report/coverage.xml -o ./report/badge.svg
 
       - name: Upload coverage artifact
         uses: actions/upload-artifact@v3
         with:
           name: report
-          path: report
+          path: ./report
       
       - name: Upload coverage to branch
         uses: s0/git-publish-subdir-action@develop
         env:
           REPO: self
           BRANCH: coverage
-          FOLDER: report
+          FOLDER: ./report
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Stop containers
