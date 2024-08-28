@@ -4,7 +4,7 @@ import pytest
 
 EMBED_URL = "http://localhost:8080"
 CLASSIFIER_URL = "http://localhost:8082"
-RERANKER_URL = "http://localhost:8084"
+RERANKER_URL = "http://localhost:8086"
 
 
 def test_is_constructable():

@@ -43,7 +43,7 @@ services:
         - ./tei_data:/data:z
     command: --model-id BAAI/bge-reranker-base --max-batch-tokens 2048 --max-client-batch-size 20 
     ports:
-      - 8084:80
+      - 8086:80
     restart: unless-stopped
 
   reranker-grpc:

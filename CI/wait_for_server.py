@@ -2,7 +2,7 @@ from tei_client import HttpClient,GrpcClient
 import time
 
 
-HTTP_URLS = ['http://localhost:8080', 'http://localhost:8082', 'http://localhost:8084']
+HTTP_URLS = ['http://localhost:8080', 'http://localhost:8082', 'http://localhost:8086']
 GRPC_URLS = ['localhost:8081', 'localhost:8083', 'localhost:8085']
 
 if __name__ == '__main__':
