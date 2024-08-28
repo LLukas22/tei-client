@@ -93,5 +93,5 @@ jobs:
         env:
             REPO: self
             BRANCH: coverage
-            FOLDER: report
+            FOLDER: ./
             GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
