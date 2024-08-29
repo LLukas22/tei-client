@@ -55,12 +55,12 @@ class Info(BaseModel):
 	server_model_dtype: str = Field(..., alias="model_dtype")
 	server_model_type: ModelType = Field(..., alias="model_type")
 	server_model_metadata: Optional[ModelMetadata] = Field(None, alias="model_metadata")
-	max_concurrent_requests: int
-	max_input_length: int
-	max_batch_tokens: int
-	max_batch_requests: int
-	max_client_batch_size: int
-	tokenization_workers: int
+	max_concurrent_requests: Optional[int]
+	max_input_length: Optional[int]
+	max_batch_tokens: Optional[int]
+	max_batch_requests: Optional[int]
+	max_client_batch_size: Optional[int]
+	tokenization_workers: Optional[int]
 
 
 class Token(BaseModel):
