@@ -1,5 +1,5 @@
 import httpx
-from typing import Any
+from typing import Any, Optional
 from tei_client.clients.base import (
 	ModelTypeMixin,
 	AsyncClientMixin,
@@ -64,6 +64,7 @@ class HttpClient(ConcurrentClientMixin, AsyncClientMixin, ModelTypeMixin):
 		normalize: bool = True,
 		truncate: bool = False,
 		truncation_direction: TruncationDirection = TruncationDirection.Right,
+		prompt_name: Optional[str] = None,
 	) -> list[list[float]]:
 		self._ensure_model_type(ModelType.Embedding)
 
@@ -77,6 +78,7 @@ class HttpClient(ConcurrentClientMixin, AsyncClientMixin, ModelTypeMixin):
 				"normalize": normalize,
 				"truncate": truncate,
 				"truncation_direction": truncation_direction.value,
+				"prompt_name": prompt_name,
 			},
 		)
 		return result.json()
@@ -87,6 +89,7 @@ class HttpClient(ConcurrentClientMixin, AsyncClientMixin, ModelTypeMixin):
 		normalize: bool = True,
 		truncate: bool = False,
 		truncation_direction: TruncationDirection = TruncationDirection.Right,
+		prompt_name: Optional[str] = None,
 	) -> list[list[float]]:
 		self._ensure_model_type(ModelType.Embedding)
 
@@ -100,6 +103,7 @@ class HttpClient(ConcurrentClientMixin, AsyncClientMixin, ModelTypeMixin):
 				"normalize": normalize,
 				"truncate": truncate,
 				"truncation_direction": truncation_direction.value,
+				"prompt_name": prompt_name,
 			},
 		)
 		return result.json()
@@ -110,6 +114,7 @@ class HttpClient(ConcurrentClientMixin, AsyncClientMixin, ModelTypeMixin):
 		normalize: bool = True,
 		truncate: bool = False,
 		truncation_direction: TruncationDirection = TruncationDirection.Right,
+		prompt_name: Optional[str] = None,
 	) -> list[list[list[float]]]:
 		self._ensure_model_type(ModelType.Embedding)
 
@@ -123,6 +128,7 @@ class HttpClient(ConcurrentClientMixin, AsyncClientMixin, ModelTypeMixin):
 				"normalize": normalize,
 				"truncate": truncate,
 				"truncation_direction": truncation_direction.value,
+				"prompt_name": prompt_name,
 			},
 		)
 		return result.json()
@@ -133,6 +139,7 @@ class HttpClient(ConcurrentClientMixin, AsyncClientMixin, ModelTypeMixin):
 		normalize: bool = True,
 		truncate: bool = False,
 		truncation_direction: TruncationDirection = TruncationDirection.Right,
+		prompt_name: Optional[str] = None,
 	) -> list[list[float]]:
 		self._ensure_model_type(ModelType.Embedding)
 
@@ -146,18 +153,27 @@ class HttpClient(ConcurrentClientMixin, AsyncClientMixin, ModelTypeMixin):
 				"normalize": normalize,
 				"truncate": truncate,
 				"truncation_direction": truncation_direction.value,
+				"prompt_name": prompt_name,
 			},
 		)
 		return result.json()
 
 	def tokenize(
-		self, text: str | list[str], add_special_tokens: bool = True
+		self,
+		text: str | list[str],
+		add_special_tokens: bool = True,
+		prompt_name: Optional[str] = None,
 	) -> list[TokenizationResult]:
 		if isinstance(text, str):
 			text = [text]
 
 		result = self.client.post(
-			"/tokenize", json={"inputs": text, "add_special_tokens": add_special_tokens}
+			"/tokenize",
+			json={
+				"inputs": text,
+				"add_special_tokens": add_special_tokens,
+				"prompt_name": prompt_name,
+			},
 		)
 		results = result.json()
 		return [
@@ -166,13 +182,21 @@ class HttpClient(ConcurrentClientMixin, AsyncClientMixin, ModelTypeMixin):
 		]
 
 	async def async_tokenize(
-		self, text: str | list[str], add_special_tokens: bool = True
+		self,
+		text: str | list[str],
+		add_special_tokens: bool = True,
+		prompt_name: Optional[str] = None,
 	) -> list[TokenizationResult]:
 		if isinstance(text, str):
 			text = [text]
 
 		result = await self.async_client.post(
-			"/tokenize", json={"inputs": text, "add_special_tokens": add_special_tokens}
+			"/tokenize",
+			json={
+				"inputs": text,
+				"add_special_tokens": add_special_tokens,
+				"prompt_name": prompt_name,
+			},
 		)
 		results = result.json()
 		return [

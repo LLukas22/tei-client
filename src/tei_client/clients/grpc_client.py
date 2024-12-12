@@ -89,7 +89,7 @@ class GrpcClient(ConcurrentClientMixin, AsyncClientMixin, ModelTypeMixin):
 			return False
 
 	async def async_health(self) -> bool:
-		return asyncio.create_task(self.health())
+		return await asyncio.create_task(self.health())
 
 	@staticmethod
 	def _into_info(result) -> Info:
@@ -124,6 +124,7 @@ class GrpcClient(ConcurrentClientMixin, AsyncClientMixin, ModelTypeMixin):
 		normalize: bool = True,
 		truncate: bool = False,
 		truncation_direction: TruncationDirection = TruncationDirection.Right,
+		prompt_name: Optional[str] = None,
 	) -> list[list[float]]:
 		self._ensure_model_type(ModelType.Embedding)
 
@@ -136,6 +137,7 @@ class GrpcClient(ConcurrentClientMixin, AsyncClientMixin, ModelTypeMixin):
 				truncate=truncate,
 				normalize=normalize,
 				truncation_direction=to_grpc_truncation(truncation_direction),
+				prompt_name=prompt_name,
 			)
 			for t in text
 		]
@@ -148,6 +150,7 @@ class GrpcClient(ConcurrentClientMixin, AsyncClientMixin, ModelTypeMixin):
 		normalize: bool = True,
 		truncate: bool = False,
 		truncation_direction: TruncationDirection = TruncationDirection.Right,
+		prompt_name: Optional[str] = None,
 	) -> list[list[float]]:
 		self._ensure_model_type(ModelType.Embedding)
 
@@ -161,12 +164,13 @@ class GrpcClient(ConcurrentClientMixin, AsyncClientMixin, ModelTypeMixin):
 					truncate=truncate,
 					normalize=normalize,
 					truncation_direction=to_grpc_truncation(truncation_direction),
+					prompt_name=prompt_name,
 				)
 
 		call = self._async_stubs.embed.EmbedStream(gen())
 
 		responses = []
-		for i in range(len(text)):
+		for _ in range(len(text)):
 			response = await call.read()
 			responses.append(response.embeddings)
 
@@ -177,6 +181,7 @@ class GrpcClient(ConcurrentClientMixin, AsyncClientMixin, ModelTypeMixin):
 		text: EmbeddingInput,
 		truncate: bool = False,
 		truncation_direction: TruncationDirection = TruncationDirection.Right,
+		prompt_name: Optional[str] = None,
 	) -> list[list[list[float]]]:
 		self._ensure_model_type(ModelType.Embedding)
 
@@ -188,6 +193,7 @@ class GrpcClient(ConcurrentClientMixin, AsyncClientMixin, ModelTypeMixin):
 				inputs=t,
 				truncate=truncate,
 				truncation_direction=to_grpc_truncation(truncation_direction),
+				prompt_name=prompt_name,
 			)
 			for t in text
 		]
@@ -202,6 +208,7 @@ class GrpcClient(ConcurrentClientMixin, AsyncClientMixin, ModelTypeMixin):
 		text: EmbeddingInput,
 		truncate: bool = False,
 		truncation_direction: TruncationDirection = TruncationDirection.Right,
+		prompt_name: Optional[str] = None,
 	) -> list[list[float]]:
 		self._ensure_model_type(ModelType.Embedding)
 
@@ -214,26 +221,30 @@ class GrpcClient(ConcurrentClientMixin, AsyncClientMixin, ModelTypeMixin):
 					inputs=t,
 					truncate=truncate,
 					truncation_direction=to_grpc_truncation(truncation_direction),
+					prompt_name=prompt_name,
 				)
 
 		call = self._async_stubs.embed.EmbedAllStream(gen())
 
 		responses = []
-		for i in range(len(text)):
+		for _ in range(len(text)):
 			response = await call.read()
 			responses.append([t.embeddings for t in response.token_embeddings])
 
 		return responses
 
 	def tokenize(
-		self, text: str | list[str], add_special_tokens: bool = True
+		self,
+		text: str | list[str],
+		add_special_tokens: bool = True,
+		prompt_name: Optional[str] = None,
 	) -> list[TokenizationResult]:
 		if isinstance(text, str):
 			text = [text]
 
 		requests = [
 			tei_pb2.EncodeRequest(
-				inputs=t, add_special_tokens=add_special_tokens, prompt_name=None
+				inputs=t, add_special_tokens=add_special_tokens, prompt_name=prompt_name
 			)
 			for t in text
 		]
@@ -256,7 +267,10 @@ class GrpcClient(ConcurrentClientMixin, AsyncClientMixin, ModelTypeMixin):
 		return results
 
 	async def async_tokenize(
-		self, text: str | list[str], add_special_tokens: bool = True
+		self,
+		text: str | list[str],
+		add_special_tokens: bool = True,
+		prompt_name: Optional[str] = None,
 	) -> list[TokenizationResult]:
 		if isinstance(text, str):
 			text = [text]
@@ -264,12 +278,14 @@ class GrpcClient(ConcurrentClientMixin, AsyncClientMixin, ModelTypeMixin):
 		async def gen():
 			for t in text:
 				yield tei_pb2.EncodeRequest(
-					inputs=t, add_special_tokens=add_special_tokens
+					inputs=t,
+					add_special_tokens=add_special_tokens,
+					prompt_name=prompt_name,
 				)
 
 		call = self._async_stubs.tokenize.TokenizeStream(gen())
 		results = []
-		for i in range(len(text)):
+		for _ in range(len(text)):
 			response = await call.read()
 			results.append(
 				TokenizationResult(
@@ -313,7 +329,7 @@ class GrpcClient(ConcurrentClientMixin, AsyncClientMixin, ModelTypeMixin):
 		self,
 		tokenized_input: list[int] | list[list[int]],
 		skip_special_tokens: bool = True,
-	) -> str:
+	) -> str | list[str]:
 		if isinstance(tokenized_input[0], int):
 			requests = [
 				tei_pb2.DecodeRequest(
