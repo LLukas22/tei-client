@@ -51,6 +51,12 @@ class ConcurrentClientMixin(ABC):
 		"""
 
 	@abstractmethod
+	def prompt_names(self) -> list[str]:
+		"""
+		Get the list of available prompt names
+		"""
+
+	@abstractmethod
 	def embed(
 		self,
 		text: EmbeddingInput,
@@ -130,6 +136,12 @@ class AsyncClientMixin(ABC):
 	async def async_info(self) -> Info:
 		"""
 		Get information about the loaded model of the TEI server
+		"""
+
+	@abstractmethod
+	async def async_prompt_names(self) -> list[str]:
+		"""
+		Get the list of available prompt names
 		"""
 
 	@abstractmethod

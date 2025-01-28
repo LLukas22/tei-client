@@ -1,6 +1,7 @@
 from pydantic import BaseModel, Field
 from typing import Optional, Literal, Union, NamedTuple, Tuple
 from enum import Enum
+import re
 
 
 class ClassificationTuple(NamedTuple):
@@ -95,3 +96,13 @@ class RerankScore(BaseModel):
 
 class RerankResult(BaseModel):
 	ranks: list[RerankScore]
+
+
+def _parse_prompt_names(message: str) -> list[str]:
+	if message:
+		available_prompts = re.search(r"Available prompts:\s*\[([^\]]*)\]", message)
+		if available_prompts:
+			available_prompts = available_prompts.group(1).replace('"', "").split(",")
+			available_prompts = [p.strip() for p in available_prompts]
+			return available_prompts
+	return []
