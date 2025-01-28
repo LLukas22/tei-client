@@ -31,6 +31,26 @@ def test_info(url: str, model_type: ModelType):
 	assert info.server_model_type == model_type
 
 
+def test_prompt_names():
+	client = HttpClient(EMBED_URL)
+	result = client.prompt_names()
+	assert len(result) > 0
+	assert result == ["query"]
+
+
+def test_non_existing_prompt_name():
+	client = HttpClient(CLASSIFIER_URL)
+	result = client.prompt_names()
+	assert len(result) == 0
+
+
+async def test_async_prompt_names():
+	client = HttpClient(EMBED_URL)
+	result = await client.async_prompt_names()
+	assert len(result) > 0
+	assert result == ["query"]
+
+
 @pytest.mark.parametrize(
 	"url,model_type",
 	[

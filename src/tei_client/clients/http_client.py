@@ -19,6 +19,7 @@ from tei_client.models import (
 	ClassificationScore,
 	RerankScore,
 )
+import re
 
 
 class HttpClient(ConcurrentClientMixin, AsyncClientMixin, ModelTypeMixin):
@@ -57,6 +58,43 @@ class HttpClient(ConcurrentClientMixin, AsyncClientMixin, ModelTypeMixin):
 	async def async_info(self) -> Info:
 		result = await self.async_client.get("/info")
 		return HttpClient._into_info(result.json())
+
+	def __parse_prompt_names(self, result: httpx.Response) -> list[str]:
+		if result.is_error:
+			message = result.json().get("error", None)
+			if message:
+				available_prompts = re.search(
+					r"Available prompts:\s*\[([^\]]*)\]", message
+				)
+				if available_prompts:
+					available_prompts = (
+						available_prompts.group(1).replace('"', "").split(",")
+					)
+					available_prompts = [p.strip() for p in available_prompts]
+					return available_prompts
+		return []
+
+	def prompt_names(self) -> list[str]:
+		result = self.client.post(
+			"/tokenize",
+			json={
+				"inputs": "hello",
+				"add_special_tokens": False,
+				"prompt_name": "$NOT_EXISTING_PROMPT_NAME$",
+			},
+		)
+		return self.__parse_prompt_names(result)
+
+	async def async_prompt_names(self) -> list[str]:
+		result = await self.async_client.post(
+			"/tokenize",
+			json={
+				"inputs": "hello",
+				"add_special_tokens": False,
+				"prompt_name": "$NOT_EXISTING_PROMPT_NAME$",
+			},
+		)
+		return self.__parse_prompt_names(result)
 
 	def embed(
 		self,

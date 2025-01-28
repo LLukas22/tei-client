@@ -5,7 +5,7 @@ services:
     image: ghcr.io/huggingface/text-embeddings-inference:cpu-latest
     volumes:
         - ./tei_data:/data:z
-    command: --model-id sentence-transformers/all-MiniLM-L6-v2 --max-batch-tokens 2048 --max-client-batch-size 20 
+    command: --model-id Snowflake/snowflake-arctic-embed-xs --max-batch-tokens 2048 --max-client-batch-size 20 
     ports:
       - 8080:80
     restart: unless-stopped
@@ -14,7 +14,7 @@ services:
     image: ghcr.io/huggingface/text-embeddings-inference:cpu-latest-grpc
     volumes:
         - ./tei_data:/data:z
-    command: --model-id sentence-transformers/all-MiniLM-L6-v2 --max-batch-tokens 2048 --max-client-batch-size 20 
+    command: --model-id Snowflake/snowflake-arctic-embed-xs --max-batch-tokens 2048 --max-client-batch-size 20 
     ports:
       - 8081:80
     restart: unless-stopped
