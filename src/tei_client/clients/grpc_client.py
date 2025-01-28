@@ -21,6 +21,7 @@ from tei_client.models import (
 	ClassificationTuple,
 	RerankResult,
 	RerankScore,
+	_parse_prompt_names,
 )
 
 import tei_client.stubs.tei_pb2_grpc as tei_pb2_grpc
@@ -117,6 +118,22 @@ class GrpcClient(ConcurrentClientMixin, AsyncClientMixin, ModelTypeMixin):
 	async def async_info(self) -> Info:
 		result = await self._async_stubs.info.Info(tei_pb2.InfoRequest())
 		return GrpcClient._into_info(result)
+
+	def prompt_names(self) -> list[str]:
+		try:
+			_ = self._stubs.tokenize.Tokenize(
+				tei_pb2.EncodeRequest(
+					inputs="hello",
+					add_special_tokens=False,
+					prompt_name="$NOT_EXISTING_PROMPT_NAME$",
+				)
+			)
+		except Exception as e:
+			return _parse_prompt_names(str(e))
+		return []
+
+	async def async_prompt_names(self) -> list[str]:
+		return self.prompt_names()
 
 	def embed(
 		self,

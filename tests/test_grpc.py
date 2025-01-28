@@ -41,6 +41,18 @@ async def test_info_async(url: str, model_type: ModelType):
 	assert info.server_model_type == model_type
 
 
+def test_prompt_names():
+	client = GrpcClient(EMBED_URL)
+	result = client.prompt_names()
+	assert result == ["query"]
+
+
+async def test_async_prompt_names():
+	client = GrpcClient(EMBED_URL)
+	result = await client.async_prompt_names()
+	assert result == ["query"]
+
+
 def test_embed():
 	client = GrpcClient(EMBED_URL)
 	result = client.embed("Hello world")

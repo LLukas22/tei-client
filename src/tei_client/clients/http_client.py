@@ -18,6 +18,7 @@ from tei_client.models import (
 	Token,
 	ClassificationScore,
 	RerankScore,
+	_parse_prompt_names,
 )
 
 
@@ -57,6 +58,31 @@ class HttpClient(ConcurrentClientMixin, AsyncClientMixin, ModelTypeMixin):
 	async def async_info(self) -> Info:
 		result = await self.async_client.get("/info")
 		return HttpClient._into_info(result.json())
+
+	def prompt_names(self) -> list[str]:
+		result = self.client.post(
+			"/tokenize",
+			json={
+				"inputs": "hello",
+				"add_special_tokens": False,
+				"prompt_name": "$NOT_EXISTING_PROMPT_NAME$",
+			},
+		)
+
+		message = result.json().get("error", None) if result.is_error else None
+		return _parse_prompt_names(message)
+
+	async def async_prompt_names(self) -> list[str]:
+		result = await self.async_client.post(
+			"/tokenize",
+			json={
+				"inputs": "hello",
+				"add_special_tokens": False,
+				"prompt_name": "$NOT_EXISTING_PROMPT_NAME$",
+			},
+		)
+		message = result.json().get("error", None) if result.is_error else None
+		return _parse_prompt_names(message)
 
 	def embed(
 		self,
