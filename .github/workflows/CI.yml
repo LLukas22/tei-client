@@ -29,7 +29,7 @@ jobs:
     - name: Build package
       run: python -m build
     - name: Upload wheels
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: wheels
         path: dist/
@@ -68,7 +68,7 @@ jobs:
           genbadge coverage -i ./report/coverage.xml -o ./report/badge.svg
 
       - name: Upload coverage artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: report
           path: ./report
@@ -81,7 +81,7 @@ jobs:
      runs-on: ubuntu-latest
      needs: test
      steps:
-      - uses: actions/download-artifact@v3
+      - uses: actions/download-artifact@v4
         with:
           name: report
       
