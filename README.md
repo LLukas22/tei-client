@@ -30,10 +30,10 @@ pip install tei-client[grpc]
 
 To create an instance of the client, you can do the following:
 ```python
-from tei_client import HTTPClient
+from tei_client import HttpClient
 
 url = 'http://localhost:8080'
-client = HTTPClient(url)
+client = HttpClient(url)
 ```
 <details>
     <summary>Example docker server</summary>
