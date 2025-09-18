@@ -49,8 +49,8 @@ def get_model_metadata_prototype(model_type: ModelType) -> type[ModelMetadata]:
 
 class Info(BaseModel):
 	version: str
-	sha: str
-	docker_label: str
+	sha: Optional[str]
+	docker_label: Optional[str]
 	server_model_id: str = Field(..., alias="model_id")
 	server_model_sha: Optional[str] = Field(None, alias="model_sha")
 	server_model_dtype: str = Field(..., alias="model_dtype")
